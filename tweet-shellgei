@@ -1,0 +1,93 @@
+#!/usr/bin/env python
+#coding: utf-8
+import os
+import sys
+import codecs
+from requests_oauthlib import OAuth1Session
+
+def usage():
+	sys.stderr.write( """
+Tweet your command line with hashtag "#シェル芸".
+(from STDIN)
+
+To get your current command line, you can use below allias:
+    alias current-cmdline='history 2 | head -1 | sed "s/^[ ]*[0-9]*[ ]*//g"'
+
+Usage   : current-cmdline | tweet-shellgei
+"""[1:-1])
+	sys.exit(1)
+
+def resetStdout():
+	if sys.version_info[0] < 3:
+		return codecs.getwriter('utf-8')(sys.stdout)
+	return codecs.getwriter('utf-8')(sys.stdout.detach())
+
+def resetStderr():
+	if sys.version_info[0] < 3:
+		return codecs.getwriter('utf-8')(sys.stderr)
+	return codecs.getwriter('utf-8')(sys.stderr.detach())
+
+def die(message):
+	print >> sys.stderr, "Error[gyo] :", message
+	sys.exit(1)
+
+def config_to_dictionary(file):
+	d = {}
+	arr = []
+	for line in file:
+		key, val = line.strip().split("=")
+		d[key] = val
+	return d
+
+def tweet(twitterkeys, message):
+	url = "https://api.twitter.com/1.1/statuses/update.json"
+	twitter = OAuth1Session(
+		twitterkeys["CONSUMER_KEY"],
+		twitterkeys["CONSUMER_SECRET"],
+		twitterkeys["ACCESS_TOKEN"],
+		twitterkeys["ACCESS_TOKEN_SECRET"]
+	)
+	params = {"status": message}
+	req = twitter.post(url, params = params)
+	if req.status_code == 200:
+	    print("OK")
+	else:
+	    print("Error: %d" % req.status_code)
+
+if __name__ == '__main__':
+	if len(sys.argv) > 1:	usage()
+
+	sys.stdout = resetStdout()
+	sys.stderr = resetStderr()
+
+	hashtag = u"#シェル芸"
+	cmdline = sys.stdin.read().strip()
+	message = cmdline + " " + hashtag
+	print("tweet:" + message)
+	print
+	print("length:" + str(len(message)))
+	print
+	if len(message) > 140:
+		print("That's too long!")
+		sys.exit(1)
+
+	### TODO:HELP ME!
+	#print("Are you OK?  [Y/N]")
+	#yn = raw_input()
+	#print "yn=" + yn
+	#if yn != "Y":
+	#	sys.exit(0)
+
+	config = os.getenv("HOME") + os.sep + "twitter.key"
+	twitterkeys = None
+	if os.path.isfile(config):
+		try:
+			file = open(config,'r')
+			twitterkeys = config_to_dictionary(file)
+			file.close()
+		except IOError:
+			die(config + ":file cannot open.")
+	else:
+		die(config + ":file not exists.")
+
+	tweet(twitterkeys, message)
