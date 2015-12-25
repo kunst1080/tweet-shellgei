@@ -2,7 +2,29 @@
 Tweet your command line with hashtag "#シェル芸".
 (from STDIN)
 
-To get your current command line, you can use below allias:
-    alias current-cmdline='history 2 | head -1 | sed "s/^[ ]*[0-9]*[ ]*//g"'
+Usage   : show-current-cmdline | tweet-shellgei
 
-Usage   : current-cmdline | tweet-shellgei
+# Getting Started
+1. Copy "twitter.key.sample" to your home.
+
+  ```bash
+  cp twitter.key.sample $HOME/twitter.key
+  ```
+
+2. Get your OAuth access token.
+
+  fight!
+
+3. Edit "twitter.key".
+
+4. Setup alias.
+
+  ```bash
+  alias show-current-cmdline='history 2 | head -1 | sed "s/^[ ]*[0-9]*[ ]*//g"``
+  ```
+
+5. Tweet!
+
+  ```bash
+  show-current-cmdline | tweet-shellgei
+  ```
