@@ -20,7 +20,7 @@ Usage   : show-current-cmdline | tweet-shellgei
 4. Setup alias.
 
   ```bash
-  alias show-current-cmdline='history 2 | head -1 | sed "s/^[ ]*[0-9]*[ ]*//g"``
+  alias show-current-cmdline='history -p !!'
   ```
 
 5. Tweet!
