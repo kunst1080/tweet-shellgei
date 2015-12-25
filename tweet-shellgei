@@ -14,6 +14,7 @@ To get your current command line, you can use below allias:
     alias show-current-cmdline='history -p !!'
 
 Usage   : show-current-cmdline | tweet-shellgei
+
 """[1:-1])
 	sys.exit(1)
 
